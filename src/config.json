@@ -3,7 +3,7 @@
     "env": "dev",
     "cfg": {
         "module": "sample",
-        "moduleLabel": "Sample module",
+        "moduleLabel": "GPAO-Ressources module",
         "aside": true,
         "app_mode": "default",
         "ppp": "private",
