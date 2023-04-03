@@ -8,52 +8,23 @@
 		@auth-change="setLocal_user"
 		@structure-change="switchStructure">
 
-		<template v-slot:header>
-			<div class="mx-2 d-flex align-items-center" v-if="openedElement">
-				<router-link to="/" custom v-slot="{ navigate, href }">
-					<a class="btn btn-dark me-2" :href="href" @click="navigate">
-						<i class="bi bi-arrow-left"></i>
-					</a>
-				</router-link>
-				<router-link :to="'/element/'+openedElement.id+'/properties'" custom v-slot="{ navigate, href }">
-					<a class="btn btn-dark me-2" :href="href" @click="navigate">
-						<i class="bi bi-file-earmark me-1"></i>
-						{{openedElement.name}}
-					</a>
-				</router-link>
-
-				<div class="dropdown">
-					<button class="btn btn-dark dropdown-toggle" type="button" id="fileDdMenu" data-bs-toggle="dropdown" aria-expanded="false">
-						Fichier
-					</button>
-					<ul class="dropdown-menu" aria-labelledby="fileDdMenu">
-						<li>
-							<router-link :to="'/element/'+openedElement.id+'/informations'" custom v-slot="{ navigate, href }">
-								<a class="dropdown-item" :href="href" @click="navigate">Informations</a>
-							</router-link>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</template>
-
-
 		<template v-slot:menu>
 			<AppMenu>
-				<AppMenuItem href="/" look="dark" icon="bi bi-house">Accueil</AppMenuItem>
-				<AppMenuItem href="/about" look="dark" icon="bi bi-app">À propos</AppMenuItem>
+				<AppMenuItem href="/materiels" look="dark" icon="bi bi-house">Materiel</AppMenuItem>
 			</AppMenu>
 		</template>
 
-		<template v-slot:list>
-			<AppMenu>
-				<AppMenuItem :href="'/element/'+el.id" icon="bi bi-file-earmark" v-for="el in elements" :key="el.id">{{el.name}}</AppMenuItem>
+		<template v-slot:list v-if="$route.name !== 'Home'">
+			
+			<AppMenu v-if="includeInRoute('Materiels')">
+				<input type="text" class="form-control my-2 px-2" placeholder="Rechercher..." v-model="displaySearch">
+				<AppMenuItem :href="'/materiels/'+mat.id" icon="bi bi-file-earmark" v-for="mat in resultSearch(listMateriel())" :key="mat.id">{{mat.name}}</AppMenuItem>
 			</AppMenu>
 		</template>
 
 		<template v-slot:core>
-			<div class="px-2 bg-light">
-				<router-view :cfg="cfg" v-if="isConnectedUser" />
+			<div class="bg-light" v-if="isConnectedUser">
+				<router-view/>
 			</div>
 		</template>
 
@@ -80,7 +51,21 @@ export default {
 			pending: {
 				elements: true
 			},
+			displaySearch:'',
 			isConnectedUser: false
+		}
+	},
+
+	watch: {
+
+		/**
+		 * Surveille le chemin et selon l'evenement "menuChanged",
+		 * il affiche la liste associé au menu 
+		 */
+		$route() {
+			if (this.$route.name !== 'Home') {
+				this.$app.dispatchEvent('menuChanged','list');
+			}
 		}
 	},
 
@@ -89,6 +74,52 @@ export default {
 	},
 
 	methods: {
+		includeInRoute(pathName){
+			if(pathName && this.$route.name) {
+				let routeName = this.$route.name;
+				return routeName.includes(pathName)
+			} else {
+				return false;
+			}
+		},
+		listMateriel(){
+			let list=[];
+			list.push({id: 1,name: "Ordinateur Portable",});
+			list.push({id: 2,name: "Stylo Bic",});
+			list.push({id: 3,name: "Souris Sympa",});
+			list.push({id: 4,name: "Clavier semi-mechanique de Guillaume",});
+			return list
+		},
+
+		/**
+		 * Retourne une un tableau de String trié selon la recherche faite par l'utilisateur
+		 * 
+		 * @param {Array} ressource 
+		 * 
+		 * @returns {Array}
+		 */
+		resultSearch(ressource){
+			let ressourceList = [];
+			for (let name of ressource) {
+				ressourceList.push(name.name);
+			}
+			if (this.displaySearch !== ''){
+				ressourceList = ressourceList.filter((item)=>{
+					return item.match(this.displaySearch)
+				})
+			}
+
+			let final = [];
+			for (let ressources of ressourceList) {
+				for ( let data of ressource) {
+					if (ressources == data.name) {
+						final.push(data);
+					}
+				}
+			}
+			return final;
+		},
+
 		/**
 		 * Met à jour les informations de l'utilisateur connecté
 		 * @param {Object} user Un objet LocalUser

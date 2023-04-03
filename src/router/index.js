@@ -16,18 +16,27 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
-    path: '/element/:id',
-    name: 'Element',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Element.vue'),
+    path: '/materiels',
+    name: 'Materiels',
+    component: () => import(/* webpackChunkName: "Materiels" */ '../views/Materiels.vue'),
     children: [
       {
-        path: 'properties',
-        component: () => import('../views/ElementProperties.vue')
+        path: ':id',
+        name: 'MaterielsInfo',
+        component: () => import('../views/Materiels.vue'),
+        children: [
+          {
+            path: 'edit',
+            name: 'MaterielsEdit',
+            component: () => import('../views/EditMateriel.vue')
+          },
+        ]
       },
       {
-        path: 'informations',
-        component: () => import('../views/ElementInformations.vue')
-      }
+        path: 'add',
+        name: 'MaterielsAdd',
+        component: () => import('../views/EditMateriel.vue')
+      },
     ]
   }
 ]
