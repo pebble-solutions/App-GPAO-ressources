@@ -161,7 +161,6 @@ export default {
 		 * @param {Integer} structureId
 		 */
 		switchStructure(structureId) {
-			this.$router.push('/');
 			this.$store.dispatch('switchStructure', structureId);
 
 			if (this.isConnectedUser) {
@@ -176,6 +175,10 @@ export default {
 		AppWrapper,
 		AppMenu,
 		AppMenuItem
+	},
+
+	mounted(){
+		this.$router.push({ path: '/materiels' })
 	}
 
 }

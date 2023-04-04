@@ -15,17 +15,18 @@
             </div>
         </div>
     </div>
-    <MaterielInformation v-if="$route.params.id"/>
+    <RouterView/>
 </template>
 
 <script>
-
-import MaterielInformation from '../components/pebble-ui/materiel/MaterielInformation.vue';
+import { RouterLink, RouterView } from 'vue-router';
 
 export default {
+    inheritAttrs :false,
 
 	components: {
-		MaterielInformation
+        RouterLink,
+        RouterView
 	}
 
 }

@@ -1,14 +1,14 @@
 <template>
     <AppModal 
-        :title="'Modification du domain'" 
+        :title="getTitre()" 
         size="md"
         @submit="routeToParent()" 
         @modal-hide="routeToParent()" 
-        :submitBtn="submitRes()" 
+        :submitBtn="true" 
         :cancelBtn="true">
 
-        <addFormMateriel v-if="$route.params.name == 'MaterielsAdd'"/>
-        <modifyFormMateriel v-if="$route.params.name == 'MaterielsEdit'"/>
+        <AddFormMateriel v-if="$route.name == 'MaterielsAdd'"/>
+        <ModifyFormMateriel v-if="$route.name == 'MaterielsEdit'"/>
        
     </AppModal>
 </template>
@@ -16,42 +16,31 @@
 <script>
 
 import AppModal from '../components/pebble-ui/AppModal.vue';
-import addFormMateriel from '../components/pebble-ui/materiel/addFormMateriel.vue';
-import modifyFormMateriel from '../components/pebble-ui/materiel/modifyFormMateriel.vue';
+import AddFormMateriel from '../components/materiel/AddFormMateriel.vue';
+import ModifyFormMateriel from '../components/materiel/ModifyFormMateriel.vue';
 
 export default {
-    components: { AppModal, addFormMateriel, modifyFormMateriel},
-    data() {
-        return {
-            domain:''
-        }
-    },
+    components: { AppModal, AddFormMateriel, ModifyFormMateriel},
     computed:{
 
         /**
-         * Retourne le nom de domaine de la licence
+         * Retourne le nom de de la route
          * 
          * @returns {string}
          */
-        getDomName(){
-            return this.$route.params.domain;
+        getRouteName(){
+            return this.$route.name;
         }
+
     },
     methods: {
-
-        /**
-         * Retourne un Booléen selon si le domain contient un caractere ou non
-         * 
-         * @returns {boolean}
-         */
-        submitRes(){
-            if (!this.domain){
-                return false;
-            }else{
-                return true;
+        getTitre(){
+            if (this.getRouteName == 'MaterielsAdd') {
+                return "Ajout d'un materiel"
+            } else if (this.getRouteName == 'MaterielsEdit') {
+                return "Modification du materiel"
             }
         },
-        
         /**
          * retourne à la route précédente
          */
