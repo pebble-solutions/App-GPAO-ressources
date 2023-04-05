@@ -7,7 +7,8 @@ export default createStore({
 		login: null,
 		elements: [],
 		openedElement: null,
-		tmpElement: null
+		tmpElement: null,
+		ressources: []
 	},
 	getters: {
 		activeStructure(state) {
@@ -126,6 +127,16 @@ export default createStore({
 		 */
 		setStructureId(state, structureId) {
 			state.activeStructureId = structureId;
+		},
+
+		/**
+		 * Enregistrer les ressources dans le store
+		 * 
+		 * @param {Object} state Le state de l'instance VueX 
+		 * @param {Array} ressources  Collection d'object ressources
+		 */
+		setRessources(state,ressources) {
+			state.ressources = ressources;
 		}
 	},
 	actions: {
@@ -218,7 +229,17 @@ export default createStore({
 			context.commit('tmpElement', null);
 			context.commit('replaceElements', []);
 			context.commit('setStructureId', payload);
-		}
+		},
+
+		/**
+		 * Met a jour les ressources
+		 * 
+		 * @param {Object} context Instance VueX 
+		 * @param {Array} ressources Collection d'object ressources
+		 */
+		refreshRessources(context, ressources) {
+			context.commit('setRessources', ressources);
+		},
 	},
 	modules: {
 	}

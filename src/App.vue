@@ -18,7 +18,7 @@
 			
 			<AppMenu v-if="includeInRoute('Materiels')">
 				<input type="text" class="form-control my-2 px-2" placeholder="Rechercher..." v-model="displaySearch">
-				<AppMenuItem :href="'/materiels/'+mat.id" icon="bi bi-file-earmark" v-for="mat in resultSearch(listMateriel())" :key="mat.id">{{mat.name}}</AppMenuItem>
+				<AppMenuItem :href="'/materiels/'+mat.id" icon="bi bi-file-earmark" v-for="mat in resultSearch()" :key="mat.id">{{mat.nom}}</AppMenuItem>
 			</AppMenu>
 		</template>
 
@@ -51,7 +51,7 @@ export default {
 			pending: {
 				elements: true
 			},
-			displaySearch:'',
+			displaySearch: '',
 			isConnectedUser: false
 		}
 	},
@@ -70,10 +70,13 @@ export default {
 	},
 
 	computed: {
-		...mapState(['elements', 'openedElement'])
+		...mapState(['elements', 'openedElement', 'ressources'])
 	},
 
 	methods: {
+
+		...mapActions(['closeElement', 'refreshRessources']),
+
 		includeInRoute(pathName){
 			if(pathName && this.$route.name) {
 				let routeName = this.$route.name;
@@ -82,42 +85,31 @@ export default {
 				return false;
 			}
 		},
-		listMateriel(){
-			let list=[];
-			list.push({id: 1,name: "Ordinateur Portable",});
-			list.push({id: 2,name: "Stylo Bic",});
-			list.push({id: 3,name: "Souris Sympa",});
-			list.push({id: 4,name: "Clavier semi-mechanique de Guillaume",});
-			return list
+
+		getMateriel(){
+			this.$app.apiGet('/v2/ressource').then(data => {
+				this.refreshRessources(data)
+            }).catch(this.$app.catchError)
 		},
 
 		/**
-		 * Retourne une un tableau de String trié selon la recherche faite par l'utilisateur
+		 * Retourne un tableau trié selon la recherche faite par l'utilisateur
 		 * 
 		 * @param {Array} ressource 
 		 * 
 		 * @returns {Array}
 		 */
-		resultSearch(ressource){
-			let ressourceList = [];
-			for (let name of ressource) {
-				ressourceList.push(name.name);
-			}
-			if (this.displaySearch !== ''){
-				ressourceList = ressourceList.filter((item)=>{
-					return item.match(this.displaySearch)
-				})
-			}
-
-			let final = [];
-			for (let ressources of ressourceList) {
-				for ( let data of ressource) {
-					if (ressources == data.name) {
-						final.push(data);
-					}
+		resultSearch(){
+			if (this.ressources.length != 0) {
+				let ressource = this.ressources
+				if (this.displaySearch !== ''){
+					ressource = ressource.filter((item)=>{
+						return item.nom.match(this.displaySearch)
+					})
 				}
+
+				return ressource;
 			}
-			return final;
 		},
 
 		/**
@@ -162,13 +154,13 @@ export default {
 		 */
 		switchStructure(structureId) {
 			this.$store.dispatch('switchStructure', structureId);
+			this.$router.push({ path: '/materiels' });
 
 			if (this.isConnectedUser) {
-				this.listElements();
+				this.getMateriel();
+				// this.listElements();
 			}
-		},
-
-		...mapActions(['closeElement'])
+		}
 	},
 
 	components: {
@@ -178,7 +170,7 @@ export default {
 	},
 
 	mounted(){
-		this.$router.push({ path: '/materiels' })
+		this.$router.push({ path: '/materiels' });
 	}
 
 }

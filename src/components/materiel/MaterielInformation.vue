@@ -3,20 +3,73 @@
         <div class= "card mt-3 col-6">
             <div class="d-block fs-5 w-100 py-2 text-secondary text-center">
                 <span class="me-2">#{{ materielID }}</span>
-                <strong :class="labelClass">{{materiel.name}}</strong>
+                <strong :class="labelClass">{{materiel.nom}}</strong>
             </div>
         </div>  
     </div>
 
     <div class="d-flex justify-content-center">
         <div class= "card mt-3 col-6">
+            <h5 class="card-title m-2">Caractéristiques techniques : </h5>
             <ul class="list-group">
                 <li class="list-group-item d-flex justify-content-center">
-                    <span class="me-2">Quantité :</span> {{ materiel.quantité }}
+                    <span class="me-2">Modèle :</span> 
+                    <span v-if="materiel.modele">{{ materiel.modele }}</span>
+                    <span class="text-warning" v-else>Modèle non renseigné</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-center">
+                    <span class="me-2">Numéro de Série :</span> 
+                    <span v-if="materiel.numero_serie">{{ materiel.numero_serie }}</span>
+                    <span class="text-warning" v-else>Numéro de série non renseigné</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-center">
+                    <span class="me-2">Référence :</span> 
+                    <span v-if="materiel.references">{{ materiel.references }}</span>
+                    <span class="text-warning" v-else>Référence non renseigné</span>
                 </li>
             </ul>
         </div> 
     </div>
+
+    <div class="d-flex justify-content-center">
+        <div class= "card mt-3 col-6">
+            <div class="form-floating" v-if="materiel.description">
+                <textarea class="form-control" :value="materiel.description" id="DescriptionMateriel" style="height: 150px"></textarea>
+                <label for="DescriptionMateriel">Description</label>
+            </div>
+
+            <div class="m-2" v-else>
+                <span class="text-warning">
+                    Aucune description renseignée
+                </span>
+            </div>
+        </div> 
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <div class= "card mt-3 col-6">
+            <div class="form-floating" v-if="materiel.commentaire">
+                <textarea class="form-control" :value="materiel.commentaire" id="CommentaireMateriel" style="height: 150px"></textarea>
+                <label for="CommentaireMateriel">Commentaire</label>
+            </div>
+            <div class="m-2" v-else>
+                <span class="text-warning">
+                    Aucun commentaire renseigné
+                </span>
+            </div>
+        </div> 
+    </div>
+
+        <!-- 
+    affected: null
+    client_id: 65
+    consommable: "NON"
+    en_service: "OUI"
+    fournisseur_id: 0
+    raison_hors_service: ""
+    ref_fournisseur: ""
+    ref_interne: ""
+    valeur_ht: 0 -->
 
     <div class="d-flex justify-content-center">
         <router-link :to="'/materiels/' + this.$route.params.id + '/edit'" v-slot="href">
@@ -69,20 +122,11 @@ export default {
     },
 
     methods: {
-        listMateriel(){
-			let list=[];
-			list.push({id: 1,name: "Ordinateur Portable",quantité:5});
-			list.push({id: 2,name: "Stylo Bic",quantité:23});
-			list.push({id: 3,name: "Souris Sympa",quantité:3});
-			list.push({id: 4,name: "Clavier semi-mechanique de Guillaume",quantité:1});
-			return list
-		},
         getMateriel() {
-            for (let materiel of this.listMateriel()) {
-                if (materiel.id == this.$route.params.id) {
-                    this.materiel= materiel;
-                }
-            }
+            this.$app.apiGet('/v2/ressource/' + this.materielID, {
+            }).then(data => {
+				this.materiel = data
+            }).catch(this.$app.catchError)
         }
     },
 

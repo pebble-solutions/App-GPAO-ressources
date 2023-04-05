@@ -1,8 +1,8 @@
 {
-    "name": "sample",
+    "name": "ressources",
     "env": "dev",
     "cfg": {
-        "module": "sample",
+        "module": "ressources",
         "moduleLabel": "GPAO-Ressources module",
         "aside": true,
         "app_mode": "default",

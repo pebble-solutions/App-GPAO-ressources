@@ -27,7 +27,7 @@ export default {
 	components: {
         RouterLink,
         RouterView
-	}
+	},
 
 }
 </script>
