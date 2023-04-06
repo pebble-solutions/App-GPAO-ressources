@@ -97,11 +97,12 @@ export default {
     watch: {
 
         /**
-         * Surveille le chemin et selon l'evenement "menuChanged",
-         * il affiche la liste associé au menu 
+         * Surveille le chemin et selon l'id passer en parametre
          */
         $route() {
-            this.getMateriel();
+            if (this.$route.params.id) {
+                this.getMateriel()
+            }
         }
     },
 

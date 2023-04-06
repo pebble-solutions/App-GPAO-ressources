@@ -1,14 +1,13 @@
 <template>
     <AppModal 
         :title="getTitre()" 
-        size="md"
-        @submit="routeToParent()" 
+        size="lg"
+        @submit="saveMateriel()" 
         @modal-hide="routeToParent()" 
         :submitBtn="true" 
         :cancelBtn="true">
 
-        <AddFormMateriel v-if="$route.name == 'MaterielsAdd'"/>
-        <ModifyFormMateriel v-if="$route.name == 'MaterielsEdit'"/>
+        <EditFormMateriel @modification="materielChange"/>
        
     </AppModal>
 </template>
@@ -16,11 +15,18 @@
 <script>
 
 import AppModal from '../components/pebble-ui/AppModal.vue';
-import AddFormMateriel from '../components/materiel/AddFormMateriel.vue';
-import ModifyFormMateriel from '../components/materiel/ModifyFormMateriel.vue';
+import EditFormMateriel from '../components/materiel/EditFormMateriel.vue';
+import { mapActions } from 'vuex';
 
 export default {
-    components: { AppModal, AddFormMateriel, ModifyFormMateriel},
+    data() {
+        return {
+            materiel:{},
+        }   
+    },
+
+    components: { AppModal, EditFormMateriel},
+    
     computed:{
 
         /**
@@ -34,6 +40,9 @@ export default {
 
     },
     methods: {
+
+        ...mapActions(['refreshRessources']),
+
         getTitre(){
             if (this.getRouteName == 'MaterielsAdd') {
                 return "Ajout d'un materiel"
@@ -41,6 +50,43 @@ export default {
                 return "Modification du materiel"
             }
         },
+
+        /**
+		 * Modifie les informations du materiel sélectionné avant validation.
+		 * 
+		 * @param {object} materielEdited Object Materiel
+		 */
+		materielChange(materielEdited) {
+			this.materiel = materielEdited;
+		},
+
+        saveMateriel(){
+            let querryResult = {
+                nom : this.materiel.nom,
+                commentaire : this.materiel.commentaire,
+                modele :  this.materiel.modele,
+                numero_serie : this.materiel.numero_serie,
+                references : this.materiel.references,
+                description : this.materiel.description,
+            };
+
+            if (this.getRouteName == 'MaterielsAdd') {
+                let id;
+                this.$app.apiPost('/v2/ressource/add', querryResult).then(data => {
+                id = data.id;
+                }).catch(this.$app.catchError);
+                this.$router.push("/materiels/"+ id);
+            } else if (this.getRouteName == 'MaterielsEdit') {
+                this.$app.apiPost('/v2/ressource/'+ this.$route.params.id, querryResult).then(data => {
+                console.log(data);
+                }).catch(this.$app.catchError);
+                this.routeToParent();
+            }else {
+                alert("Erreur lors de l'enregitrement des données, veuillez reéssayer");
+                this.routeToParent();
+            }
+        },
+
         /**
          * retourne à la route précédente
          */
