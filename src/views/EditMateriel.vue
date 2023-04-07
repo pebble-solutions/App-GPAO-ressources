@@ -16,7 +16,7 @@
 
 import AppModal from '../components/pebble-ui/AppModal.vue';
 import EditFormMateriel from '../components/materiel/EditFormMateriel.vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 export default {
     data() {
@@ -28,6 +28,8 @@ export default {
     components: { AppModal, EditFormMateriel},
     
     computed:{
+
+        ...mapState(['ressources']),
 
         /**
          * Retourne le nom de de la route
@@ -41,7 +43,7 @@ export default {
     },
     methods: {
 
-        ...mapActions(['refreshRessources']),
+        ...mapActions(['refreshRessources', 'addRessources', 'updateRessources']),
 
         getTitre(){
             if (this.getRouteName == 'MaterielsAdd') {
@@ -74,13 +76,20 @@ export default {
                 let id;
                 this.$app.apiPost('/v2/ressource/add', querryResult).then(data => {
                 id = data.id;
-                }).catch(this.$app.catchError);
-                this.$router.push("/materiels/"+ id);
+                this.addRessources([data]);
+                }).catch(this.$app.catchError)
+                .finally(() => {
+                    this.refreshRessources(this.ressources);
+                    this.$router.push("/materiels/"+ id);
+                });
             } else if (this.getRouteName == 'MaterielsEdit') {
                 this.$app.apiPost('/v2/ressource/'+ this.$route.params.id, querryResult).then(data => {
-                console.log(data);
-                }).catch(this.$app.catchError);
-                this.routeToParent();
+                this.updateRessources([data]);
+                }).catch(this.$app.catchError)
+                .finally(() => {
+                    this.refreshRessources(this.ressources)
+                    this.routeToParent();
+                });
             }else {
                 alert("Erreur lors de l'enregitrement des données, veuillez reéssayer");
                 this.routeToParent();

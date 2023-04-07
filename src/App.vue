@@ -154,9 +154,9 @@ export default {
 		 */
 		switchStructure(structureId) {
 			this.$store.dispatch('switchStructure', structureId);
-			this.$router.push({ path: '/materiels' });
-
+			
 			if (this.isConnectedUser) {
+				this.$router.push({ path: '/materiels' });
 				this.getMateriel();
 				// this.listElements();
 			}
@@ -168,10 +168,6 @@ export default {
 		AppMenu,
 		AppMenuItem
 	},
-
-	mounted(){
-		this.$router.push({ path: '/materiels' });
-	}
 
 }
 </script>

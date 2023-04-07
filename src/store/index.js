@@ -135,9 +135,30 @@ export default createStore({
 		 * @param {Object} state Le state de l'instance VueX 
 		 * @param {Array} ressources  Collection d'object ressources
 		 */
-		setRessources(state,ressources) {
-			state.ressources = ressources;
-		}
+		setRessources(state, ressources) {
+            let aData = ressources.data;
+            let mode = ressources.mode;
+			
+			if ("refresh" === mode) {
+                state.ressources = aData;
+            } else {
+                for (const index in aData) {
+                    if ('add' === mode) {
+                        state.ressources.push(aData[index]);
+                    }
+                    if ('update' === mode) {
+                        let findIndex = state.ressources.findIndex(e => e.id == aData[index].id);
+                        state.ressources[findIndex] = aData[index];
+                    }
+                    if ('remove' === mode) {
+                        let findIndex = state.ressources.findIndex(e => e.id == aData[index].id);
+                        if(findIndex !== -1) {
+                            state.ressources.splice(findIndex, 1);
+                        }
+                    }
+                }
+            }
+        },
 	},
 	actions: {
 		/**
@@ -238,8 +259,59 @@ export default createStore({
 		 * @param {Array} ressources Collection d'object ressources
 		 */
 		refreshRessources(context, ressources) {
-			context.commit('setRessources', ressources);
+			context.commit('setRessources', {
+                mode: "refresh",
+                data: ressources,
+            })
 		},
+		/**
+		 * * Met a jour un ou plusieur element la liste d asset
+         * @param {Object} context L'instance vueX
+         * @param {array} ressources
+         *      - data: Liste d'ressources
+         */
+        updateRessources(context, ressources) {
+            context.commit('setRessources', {
+                mode: 'update',
+                data: ressources,
+            });
+        },
+        /**
+         * Initialise un element la liste de ressources type
+         * @param {Object} context L'instance vueX
+         * @param {array} ressources
+         *      - data: Liste de ressources asset
+         */
+        resetRessources(context, ressources) {
+            context.commit('setRessources', {
+                mode: "reset",
+                data: ressources,
+            })
+        },
+        /**
+         * Met a jour un ou plusieur element la liste de ressources type
+         * @param {Object} context L'instance vueX
+         * @param {array} ressources
+         *      - data: Liste de ressources asset
+         */
+        addRessources(context, ressources) {
+            context.commit('setRessources', {
+                mode: 'add',
+                data: ressources,
+            })
+        },
+        /**
+         * Met a jour un ou plusieur element la liste de ressources type
+         * @param {Object} context L'instance vueX
+         * @param {array} ressources
+         *      - data: Liste de ressources asset
+         */
+        removeRessources(context, ressources) {
+            context.commit('setRessources', {
+                mode: 'remove',
+                data: ressources,
+            })
+        }
 	},
 	modules: {
 	}
