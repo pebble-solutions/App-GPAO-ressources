@@ -30,6 +30,31 @@ const routes = [
         component: () => import('../views/EditMateriel.vue')
       },
     ]
+  },
+
+  {
+    path: '/utilisateurs',
+    name: 'Utilisateurs',
+    component: () => import(/* webpackChunkName: "Materiels" */ '../views/Utilisateurs.vue'),
+    children: [
+      {
+        path: ':id',
+        name: 'UtilisateursInfo',
+        component: () => import('../components/materiel/MaterielInformation.vue'),
+        children: [
+          {
+            path: 'edit',
+            name: 'UtilisateursEdit',
+            component: () => import('../views/EditMateriel.vue')
+          },
+        ]
+      },
+      {
+        path: 'add',
+        name: 'UtilisateursAdd',
+        component: () => import('../views/EditMateriel.vue')
+      },
+    ]
   }
 ]
 

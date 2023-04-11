@@ -45,6 +45,11 @@ export default {
 
         ...mapActions(['refreshRessources', 'addRessources', 'updateRessources']),
 
+        /**
+         * Retourne le titre de la modal en fonction du nom de la route
+         * 
+         * @returns {string}
+         */
         getTitre(){
             if (this.getRouteName == 'MaterielsAdd') {
                 return "Ajout d'un materiel"
@@ -62,6 +67,9 @@ export default {
 			this.materiel = materielEdited;
 		},
 
+        /**
+         * Enregistre et rafraichis les données modifiées ou ajoutées par l'utilisateur
+         */
         saveMateriel(){
             let querryResult = {
                 nom : this.materiel.nom,

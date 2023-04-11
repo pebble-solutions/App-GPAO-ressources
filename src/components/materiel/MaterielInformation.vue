@@ -104,7 +104,7 @@ export default {
     watch: {
 
         /**
-         * Surveille le chemin et selon l'id passer en parametre
+         * Surveille le chemin et selon l'id passer en parametre rafraichis et récupere les données
          */
         $route() {
             if (this.$route.params.id) {
@@ -126,6 +126,11 @@ export default {
             return !this.materiel.name ? 'fst-italic' : '';
         },
 
+        /**
+         * Retourne l'id du materiel récuperé via les parametre de la route
+         * 
+         * @returns {number}
+         */
         materielID() {
             return this.$route.params.id;
         }
@@ -135,6 +140,9 @@ export default {
 
         ...mapActions(['refreshRessources', 'removeRessources']),
 
+        /**
+         * Retourne les infiormations du materiel via un appel l'API
+         */
         getMateriel() {
             this.$app.apiGet('/v2/ressource/' + this.materielID, {
             }).then(data => {
@@ -142,6 +150,9 @@ export default {
             }).catch(this.$app.catchError)
         },
 
+        /**
+         * Supprime et rafraichis le materiel apres avoir demander une confirmation de la supression
+         */
         supprMateriel(){
             if (confirm("Etes vous sur de vouloir supprimer ce materiel? Cette action est définitive.")) {
                 this.$app.apiDelete('/v2/ressource/' + this.materielID, {

@@ -11,12 +11,18 @@
 		<template v-slot:menu>
 			<AppMenu>
 				<AppMenuItem href="/materiels" look="dark" icon="bi bi-house">Materiel</AppMenuItem>
+				<AppMenuItem href="/utilisateurs" look="dark" icon="bi bi-house">Utilisateurs</AppMenuItem>
 			</AppMenu>
 		</template>
 
 		<template v-slot:list v-if="$route.name !== 'Home'">
 			
 			<AppMenu v-if="includeInRoute('Materiels')">
+				<input type="text" class="form-control my-2 px-2" placeholder="Rechercher..." v-model="displaySearch">
+				<AppMenuItem :href="'/materiels/'+mat.id" icon="bi bi-file-earmark" v-for="mat in resultSearch()" :key="mat.id">{{mat.nom}}</AppMenuItem>
+			</AppMenu>
+
+			<AppMenu v-if="includeInRoute('Utilisateurs')">
 				<input type="text" class="form-control my-2 px-2" placeholder="Rechercher..." v-model="displaySearch">
 				<AppMenuItem :href="'/materiels/'+mat.id" icon="bi bi-file-earmark" v-for="mat in resultSearch()" :key="mat.id">{{mat.nom}}</AppMenuItem>
 			</AppMenu>
@@ -74,6 +80,13 @@ export default {
 
 		...mapActions(['closeElement', 'refreshRessources']),
 
+		/**
+		 * Retourne un bouléen en fonction de la route (true si la route contient le nom envoyer par l'utilisateur)
+		 * 
+		 * @param {string} pathName 
+		 * 
+		 * @returns {boolean}
+		 */
 		includeInRoute(pathName){
 			if(pathName && this.$route.name) {
 				let routeName = this.$route.name;
@@ -83,8 +96,12 @@ export default {
 			}
 		},
 
+		/**
+		 * Rafraichis la liste des ressources avec les données recuperées de l'API
+		 */
 		getMateriel(){
 			this.$app.apiGet('/v2/ressource').then(data => {
+				console.log(data)
 				this.refreshRessources(data)
             }).catch(this.$app.catchError)
 		},

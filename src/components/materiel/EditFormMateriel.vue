@@ -76,62 +76,65 @@ import { mapState } from 'vuex'
 
 export default {
 
-  emits: ['modification'],
+    emits: ['modification'],
 
-  data() {
-      return {
-          materiel:{},
-      }   
-  },
+    data() {
+        return {
+            materiel:{},
+        }   
+    },
 
-  watch: {
-      materiel: {
-          handler(newValue) {
-          if (newValue) {
-              this.$emit('modification', newValue);
-          }
-          },
-          deep: true
-      }
-  },  
+    watch: {
+        /**
+         * Surveille l'objet materiel et si une modification est faite, renvoie l'evenement de modification
+        */
+        materiel: {
+            handler(newValue) {
+            if (newValue) {
+                this.$emit('modification', newValue);
+            }
+            },
+            deep: true
+        }
+    },  
 
-  computed: {
+    computed: {
       
-      ...mapState(['ressources']),
+        ...mapState(['ressources']),
 
-      /**
-       * Retourne une classe italique lorsque le display name est vide.
-       * 
-       * @returns {String}
-       */
-       labelClass() {
-          return !this.materiel.name ? 'fst-italic' : '';
-      },
+        /**
+         * Retourne une classe italique lorsque le display name est vide.
+         * 
+         * @returns {String}
+         */
+        labelClass() {
+            return !this.materiel.name ? 'fst-italic' : '';
+        },
 
-      /**
-       * Retourne l'id du materiel dans l'URL
-       * 
-       * @returns {number} ID
-       */
-      materielID() {
-          return this.$route.params.id;
-      }
-  },
+        /**
+         * Retourne l'id du materiel dans l'URL
+         * 
+         * @returns {number} ID
+         */
+        materielID() {
+            return this.$route.params.id;
+        }
+    },
 
-  methods: {
-      /**
-       * Initialise la valeur du materiel actuel
-       */
-      getMateriel() {
-          this.materiel =  this.ressources.find(materiel => materiel.id == this.materielID)
-      }
-  },
+    methods: {
+        /**
+         * Initialise la valeur du materiel actuel
+         */
+        getMateriel() {
+            this.materiel =  this.ressources.find(materiel => materiel.id == this.materielID)
+        }
+    },
 
-  mounted(){
-    if (this.$route.name == "MaterielsEdit") {
-        this.getMateriel()
+    mounted(){
+        if (this.$route.name == "MaterielsEdit") {
+            this.getMateriel()
+        }
     }
-  }
 
 }
 
