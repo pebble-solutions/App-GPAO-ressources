@@ -80,12 +80,19 @@
             </a>
         </router-link>
 
+        <button type="button" class="btn btn-danger m-2" @click="supprMateriel()"> 
+            <i class="bi bi-trash me-2"></i> 
+            Supprimer
+        </button>
     </div>
+
 
     <router-view/>
 </template>
 
 <script>
+
+import { mapActions, mapState } from 'vuex';
 
 export default {
     data() {
@@ -107,6 +114,8 @@ export default {
     },
 
     computed: {
+
+        ...mapState(['ressources']),
         
         /**
          * Retourne une classe italique lorsque le display name est vide.
@@ -123,11 +132,28 @@ export default {
     },
 
     methods: {
+
+        ...mapActions(['refreshRessources', 'removeRessources']),
+
         getMateriel() {
             this.$app.apiGet('/v2/ressource/' + this.materielID, {
             }).then(data => {
 				this.materiel = data
             }).catch(this.$app.catchError)
+        },
+
+        supprMateriel(){
+            if (confirm("Etes vous sur de vouloir supprimer ce materiel? Cette action est définitive.")) {
+                this.$app.apiDelete('/v2/ressource/' + this.materielID, {
+                }).then(data => {
+                    data.id = this.materielID
+                    this.removeRessources([data])
+                }).catch(this.$app.catchError)
+                .finally(() => {
+                    this.refreshRessources(this.ressources);
+                    this.$router.push("/materiels/");
+                });
+            }
         }
     },
 

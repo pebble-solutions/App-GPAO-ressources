@@ -289,7 +289,7 @@ export default createStore({
             })
         },
         /**
-         * Met a jour un ou plusieur element la liste de ressources type
+         * Met a jour un ou plusieurs elements de la liste de ressources type
          * @param {Object} context L'instance vueX
          * @param {array} ressources
          *      - data: Liste de ressources asset
@@ -301,7 +301,7 @@ export default createStore({
             })
         },
         /**
-         * Met a jour un ou plusieur element la liste de ressources type
+         * Met a jour un ou plusieurs elements de la liste de ressources type
          * @param {Object} context L'instance vueX
          * @param {array} ressources
          *      - data: Liste de ressources asset

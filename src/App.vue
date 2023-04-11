@@ -48,9 +48,6 @@ export default {
 			cfg: CONFIG.cfg,
 			cfgMenu: CONFIG.cfgMenu,
 			cfgSlots: CONFIG.cfgSlots,
-			pending: {
-				elements: true
-			},
 			displaySearch: '',
 			isConnectedUser: false
 		}
@@ -70,7 +67,7 @@ export default {
 	},
 
 	computed: {
-		...mapState(['elements', 'openedElement', 'ressources'])
+		...mapState(['openedElement', 'ressources'])
 	},
 
 	methods: {
@@ -109,6 +106,8 @@ export default {
 				}
 
 				return ressource;
+			} else if (this.isConnectedUser) {
+				this.getMateriel()
 			}
 		},
 
@@ -128,26 +127,6 @@ export default {
 		},
 
 		/**
-		 * Envoie une requête pour lister les éléments et les stocke dans le store
-		 * 
-		 * @param {Object} params Paramètre passés en GET dans l'URL
-		 * @param {String} action 'update' (défaut), 'replace', 'remove'
-		 */
-		listElements(params, action) {
-			if (this.isConnectedUser) {
-				action = typeof action === 'undefined' ? 'update' : action;
-				this.$app.listElements(this, params)
-				.then((data) => {
-					this.$store.dispatch('refreshElements', {
-						action,
-						elements: data
-					});
-				})
-				.catch(this.$app.catchError);
-			}
-		},
-
-		/**
 		 * Change de structure, vide le store
 		 * 
 		 * @param {Integer} structureId
@@ -158,7 +137,6 @@ export default {
 			if (this.isConnectedUser) {
 				this.$router.push({ path: '/materiels' });
 				this.getMateriel();
-				// this.listElements();
 			}
 		}
 	},
