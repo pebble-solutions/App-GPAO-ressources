@@ -24,7 +24,7 @@
 
 			<AppMenu v-if="includeInRoute('Utilisateurs')">
 				<input type="text" class="form-control my-2 px-2" placeholder="Rechercher..." v-model="displaySearch">
-				<AppMenuItem :href="'/materiels/'+mat.id" icon="bi bi-file-earmark" v-for="mat in resultSearch()" :key="mat.id">{{mat.nom}}</AppMenuItem>
+				<AppMenuItem :href="'/utilisateurs/'+us.id" icon="bi bi-file-earmark" v-for="us in resultSearch()" :key="us.id">{{us.cache_nom}}</AppMenuItem>
 			</AppMenu>
 		</template>
 
@@ -73,12 +73,12 @@ export default {
 	},
 
 	computed: {
-		...mapState(['openedElement', 'ressources'])
+		...mapState(['openedElement', 'ressources', 'personnels'])
 	},
 
 	methods: {
 
-		...mapActions(['closeElement', 'refreshRessources']),
+		...mapActions(['closeElement', 'refreshRessources', 'refreshPersonnels']),
 
 		/**
 		 * Retourne un bouléen en fonction de la route (true si la route contient le nom envoyer par l'utilisateur)
@@ -99,11 +99,16 @@ export default {
 		/**
 		 * Rafraichis la liste des ressources avec les données recuperées de l'API
 		 */
-		getMateriel(){
+		getData(){
+			
 			this.$app.apiGet('/v2/ressource').then(data => {
-				console.log(data)
 				this.refreshRessources(data)
-            }).catch(this.$app.catchError)
+            }).catch(this.$app.catchError);
+			
+			this.$app.apiGet('/v2/personnel').then(data => {
+				this.refreshPersonnels(data)
+			}).catch(this.$app.catchError);
+
 		},
 
 		/**
@@ -114,17 +119,32 @@ export default {
 		 * @returns {Array}
 		 */
 		resultSearch(){
-			if (this.ressources.length != 0) {
-				let ressource = this.ressources
-				if (this.displaySearch !== ''){
-					ressource = ressource.filter((item)=>{
-						return item.nom.match(this.displaySearch)
-					})
+			if (this.includeInRoute('Materiels')) {
+				if (this.ressources.length != 0) {
+					let ressource = this.ressources
+					if (this.displaySearch !== ''){
+						ressource = ressource.filter((item)=>{
+							return item.nom.match(this.displaySearch)
+						})
+					}
+	
+					return ressource;
+				} else if (this.isConnectedUser) {
+					this.getData()
 				}
-
-				return ressource;
-			} else if (this.isConnectedUser) {
-				this.getMateriel()
+			} if (this.includeInRoute('Utilisateurs')) {
+				if (this.personnels.length != 0) {
+					let listPersonnels = this.personnels
+					if (this.displaySearch !== ''){
+						listPersonnels = listPersonnels.filter((item)=>{
+							return item.cache_nom.match(this.displaySearch)
+						})
+					}
+	
+					return listPersonnels;
+				} else if (this.isConnectedUser) {
+					this.getData()
+				}
 			}
 		},
 
@@ -153,10 +173,10 @@ export default {
 			
 			if (this.isConnectedUser) {
 				this.$router.push({ path: '/materiels' });
-				this.getMateriel();
+				this.getData();
 			}
 		}
-	},
+	}, 
 
 	components: {
 		AppWrapper,

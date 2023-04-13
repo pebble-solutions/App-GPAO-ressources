@@ -40,19 +40,14 @@ const routes = [
       {
         path: ':id',
         name: 'UtilisateursInfo',
-        component: () => import('../components/materiel/MaterielInformation.vue'),
+        component: () => import('../components/personnel/PersonnelInformation.vue'),
         children: [
           {
-            path: 'edit',
-            name: 'UtilisateursEdit',
+            path: 'ajoutmateriel',
+            name: 'UtilisateursAdd',
             component: () => import('../views/EditMateriel.vue')
           },
         ]
-      },
-      {
-        path: 'add',
-        name: 'UtilisateursAdd',
-        component: () => import('../views/EditMateriel.vue')
       },
     ]
   }

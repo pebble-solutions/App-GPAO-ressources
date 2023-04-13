@@ -8,7 +8,8 @@ export default createStore({
 		elements: [],
 		openedElement: null,
 		tmpElement: null,
-		ressources: []
+		ressources: [],
+		personnels: []
 	},
 	getters: {
 		activeStructure(state) {
@@ -159,6 +160,37 @@ export default createStore({
                 }
             }
         },
+
+		/**
+		 * Enregistrer les Personnels dans le store
+		 * 
+		 * @param {Object} state Le state de l'instance VueX 
+		 * @param {Array} ressources  Collection d'object Personnels
+		 */
+		setPersonnels(state, ressources) {
+            let aData = ressources.data;
+            let mode = ressources.mode;
+			
+			if ("refresh" === mode) {
+                state.personnels = aData;
+            } else {
+                for (const index in aData) {
+                    if ('add' === mode) {
+                        state.personnels.push(aData[index]);
+                    }
+                    if ('update' === mode) {
+                        let findIndex = state.personnels.findIndex(e => e.id == aData[index].id);
+                        state.personnels[findIndex] = aData[index];
+                    }
+                    if ('remove' === mode) {
+                        let findIndex = state.personnels.findIndex(e => e.id == aData[index].id);
+                        if(findIndex !== -1) {
+                            state.personnels.splice(findIndex, 1);
+                        }
+                    }
+                }
+            }
+        },
 	},
 	actions: {
 		/**
@@ -252,6 +284,10 @@ export default createStore({
 			context.commit('setStructureId', payload);
 		},
 
+		/****************************************
+		 *            RESSOURCES
+		 ***************************************/
+
 		/**
 		 * Met a jour les ressources
 		 * 
@@ -308,6 +344,71 @@ export default createStore({
          */
         removeRessources(context, ressources) {
             context.commit('setRessources', {
+                mode: 'remove',
+                data: ressources,
+            })
+        },
+
+		/****************************************
+		 *            PERSONNELS
+		 ***************************************/
+
+		/**
+		 * Met a jour les ressources
+		 * 
+		 * @param {Object} context Instance VueX 
+		 * @param {Array} ressources Collection d'object ressources
+		 */
+		refreshPersonnels(context, ressources) {
+			context.commit('setPersonnels', {
+                mode: "refresh",
+                data: ressources,
+            })
+		},
+		/**
+		 * * Met a jour un ou plusieur element la liste d asset
+         * @param {Object} context L'instance vueX
+         * @param {array} ressources
+         *      - data: Liste d'ressources
+         */
+        updatePersonnels(context, ressources) {
+            context.commit('setPersonnels', {
+                mode: 'update',
+                data: ressources,
+            });
+        },
+        /**
+         * Initialise un element la liste de ressources type
+         * @param {Object} context L'instance vueX
+         * @param {array} ressources
+         *      - data: Liste de ressources asset
+         */
+        resetPersonnels(context, ressources) {
+            context.commit('setPersonnels', {
+                mode: "reset",
+                data: ressources,
+            })
+        },
+        /**
+         * Met a jour un ou plusieurs elements de la liste de ressources type
+         * @param {Object} context L'instance vueX
+         * @param {array} ressources
+         *      - data: Liste de ressources asset
+         */
+        addPersonnels(context, ressources) {
+            context.commit('setPersonnels', {
+                mode: 'add',
+                data: ressources,
+            })
+        },
+        /**
+         * Met a jour un ou plusieurs elements de la liste de ressources type
+         * @param {Object} context L'instance vueX
+         * @param {array} ressources
+         *      - data: Liste de ressources asset
+         */
+        removePersonnels(context, ressources) {
+            context.commit('setPersonnels', {
                 mode: 'remove',
                 data: ressources,
             })
