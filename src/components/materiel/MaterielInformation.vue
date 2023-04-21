@@ -147,6 +147,7 @@ export default {
             this.$app.apiGet('/v2/ressource/' + this.materielID, {
             }).then(data => {
 				this.materiel = data
+                // console.log(data)
             }).catch(this.$app.catchError)
         },
 

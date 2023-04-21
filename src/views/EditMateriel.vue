@@ -91,7 +91,7 @@ export default {
                     this.$router.push("/materiels/"+ id);
                 });
             } else if (this.getRouteName == 'MaterielsEdit') {
-                this.$app.apiPost('/v2/ressource/'+ this.$route.params.id, querryResult).then(data => {
+                this.$app.apiPatch('/v2/ressource/'+ this.$route.params.id, querryResult).then(data => {
                 this.updateRessources([data]);
                 }).catch(this.$app.catchError)
                 .finally(() => {
