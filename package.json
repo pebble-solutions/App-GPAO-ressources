@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.6",
+    "@vuepic/vue-datepicker": "^4.5.0",
     "axios": "^1.2.1",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.2",
@@ -47,7 +48,7 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
-      "vue/multi-word-component-names" : "off"
+      "vue/multi-word-component-names": "off"
     }
   },
   "browserslist": [

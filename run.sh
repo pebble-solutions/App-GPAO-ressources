@@ -12,4 +12,4 @@ if [ -n "$container_id" ]; then
     container_name="$container_name$nb"
 fi
 
-docker run --name "$container_name" -it -w /app -v "$PWD:/app" node:19-alpine sh -c "yarn install && yarn run serve"
+docker run --name "$container_name" -dit -w /app -v "$PWD:/app" node:19-alpine sh -c "yarn install && yarn run serve"

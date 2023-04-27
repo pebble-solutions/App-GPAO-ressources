@@ -10,7 +10,7 @@
 
     <div class="d-flex justify-content-center">
         <div class= "card mt-3 col-6">
-            <div v-if="getMateriel">
+            <div v-if="getMateriel.length">
                 <h5 class="card-title m-2">Materiel associé : </h5>
                 <ul class="ms-5 list-group">
                     <li v-for="matos in getMateriel" :key="matos.id">
@@ -54,7 +54,7 @@
 
 <script>
 
-import { mapActions, mapState } from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
     data() {
@@ -70,14 +70,14 @@ export default {
          */
         $route() {
             if (this.$route.params.id) {
-                this.getPersonnel()
+                this.getPersonnel();
             }
         }
     },
 
     computed: {
 
-        ...mapState(['personnels', 'ressources']),
+        ...mapState(['affectations', 'ressources', 'personnels']),
         
         /**
          * Retourne une classe italique lorsque le display name est vide.
@@ -97,21 +97,24 @@ export default {
             return this.$route.params.id;
         },
 
-        getMateriel(){
-            return [this.ressources.find(e => e.client_id == this.personnel.id)]
+        getMateriel() {
+            let finalMateriel= [];
+            let affectationPersonnel = this.affectations.filter(aff => 
+                aff.structure_personnel_id == this.personnelID );
+            
+            for(let ress of this.ressources){
+                for (let aff of affectationPersonnel){
+                    if (ress.id == aff.ressources_id){
+                        finalMateriel.push(ress)
+                    }
+
+                }
+            }
+            return finalMateriel
         }
     },
 
     methods: {
-
-        ...mapActions(['refreshPersonnels',]),
-
-        /**
-         * Retourne les infiormations du client via un appel l'API
-         */
-        getPersonnel() {
-            this.personnel = this.personnels.find(e => e.id == this.personnelID)
-        },
 
         /**
          * Supprime et rafraichis le client apres avoir demander une confirmation de la supression
@@ -125,6 +128,10 @@ export default {
             }
         },
 
+        getPersonnel(){
+            this.personnel = this.personnels.find(e => e.id == this.personnelID)
+        },
+
         informationMateriel(id){
             this.$router.push({ path: '/materiels/' + id });
         }
@@ -132,7 +139,6 @@ export default {
 
     mounted(){
         this.getPersonnel();
-        console.log(this.personnel)
     }
 
 }

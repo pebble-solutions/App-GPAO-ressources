@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-10">
-                <h2 class="m-3">Liste des materiels</h2>
+                <h2 class="m-3">Liste des matériels</h2>
             </div>
             <div class="col">
                 <router-link to="/materiels/add" v-slot="{ href }">

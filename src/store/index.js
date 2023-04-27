@@ -9,7 +9,8 @@ export default createStore({
 		openedElement: null,
 		tmpElement: null,
 		ressources: [],
-		personnels: []
+		personnels: [],
+		affectations: []
 	},
 	getters: {
 		activeStructure(state) {
@@ -187,6 +188,31 @@ export default createStore({
                         if(findIndex !== -1) {
                             state.personnels.splice(findIndex, 1);
                         }
+                    }
+                }
+            }
+        },
+
+		/**
+		 * Enregistrer les affectations dans le store
+		 * 
+		 * @param {Object} state Le state de l'instance VueX 
+		 * @param {Array} ressources  Collection d'object affectations
+		 */
+		setAffectations(state, ressources) {
+            let aData = ressources.data;
+            let mode = ressources.mode;
+			
+			if ("refresh" === mode) {
+                state.affectations = aData;
+            } else {
+                for (const index in aData) {
+                    if ('add' === mode) {
+                        state.affectations.push(aData[index]);
+                    }
+                    if ('update' === mode) {
+                        let findIndex = state.affectations.findIndex(e => e.id == aData[index].id);
+                        state.affectations[findIndex] = aData[index];
                     }
                 }
             }
@@ -412,7 +438,61 @@ export default createStore({
                 mode: 'remove',
                 data: ressources,
             })
-        }
+        },
+
+		/****************************************
+		 *            AFFECTATIONS
+		 ***************************************/
+
+		/**
+		 * Met a jour les affectations
+		 * 
+		 * @param {Object} context Instance VueX 
+		 * @param {Array} ressources Collection d'object affectations
+		 */
+		refreshAffectations(context, ressources) {
+			context.commit('setAffectations', {
+                mode: "refresh",
+                data: ressources,
+            })
+		},
+		/**
+		 * * Met a jour un ou plusieur element la liste d asset
+         * @param {Object} context L'instance vueX
+         * @param {array} ressources
+         *      - data: Liste d'affectations
+         */
+        updateAffectations(context, ressources) {
+            context.commit('setAffectations', {
+                mode: 'update',
+                data: ressources,
+            });
+        },
+        /**
+         * Initialise un element la liste de affectations type
+         * @param {Object} context L'instance vueX
+         * @param {array} ressources
+         *      - data: Liste de affectations asset
+         */
+        resetAffectations(context, ressources) {
+            context.commit('setAffectations', {
+                mode: "reset",
+                data: ressources,
+            })
+        },
+        /**
+         * Met a jour un ou plusieurs elements de la liste de affectations type
+         * @param {Object} context L'instance vueX
+         * @param {array} ressources
+         *      - data: Liste de affectations asset
+         */
+        addAffectations(context, ressources) {
+            context.commit('setAffectations', {
+                mode: 'add',
+                data: ressources,
+            })
+        },
+
 	},
 	modules: {
 	}

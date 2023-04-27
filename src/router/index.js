@@ -22,6 +22,11 @@ const routes = [
             name: 'MaterielsEdit',
             component: () => import('../views/EditMateriel.vue')
           },
+          {
+            path: 'affected',
+            name: 'AffectedEdit',
+            component: () => import('../views/EditAffected.vue')
+          },
         ]
       },
       {

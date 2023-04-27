@@ -73,12 +73,12 @@ export default {
 	},
 
 	computed: {
-		...mapState(['openedElement', 'ressources', 'personnels'])
+		...mapState(['openedElement', 'ressources', 'personnels', 'affectations'])
 	},
 
 	methods: {
 
-		...mapActions(['closeElement', 'refreshRessources', 'refreshPersonnels']),
+		...mapActions(['closeElement', 'refreshRessources', 'refreshPersonnels', 'refreshAffectations']),
 
 		/**
 		 * Retourne un bouléen en fonction de la route (true si la route contient le nom envoyer par l'utilisateur)
@@ -107,6 +107,10 @@ export default {
 			
 			this.$app.apiGet('/v2/personnel').then(data => {
 				this.refreshPersonnels(data)
+			}).catch(this.$app.catchError);
+
+			this.$app.apiGet('/v2/affectation').then(data => {
+				this.refreshAffectations(data)
 			}).catch(this.$app.catchError);
 
 		},
