@@ -107,7 +107,6 @@ export default {
                     if (ress.id == aff.ressources_id){
                         finalMateriel.push(ress)
                     }
-
                 }
             }
             return finalMateriel
