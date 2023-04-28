@@ -15,47 +15,36 @@
                 <li class="list-group-item d-flex justify-content-center">
                     <span class="me-2">Modèle :</span> 
                     <span v-if="materiel.modele">{{ materiel.modele }}</span>
-                    <span class="text-warning" v-else>Modèle non renseigné</span>
+                    <span class="text-muted" v-else>Modèle non renseigné</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-center">
                     <span class="me-2">Numéro de Série :</span> 
                     <span v-if="materiel.numero_serie">{{ materiel.numero_serie }}</span>
-                    <span class="text-warning" v-else>Numéro de série non renseigné</span>
+                    <span class="text-muted" v-else>Numéro de série non renseigné</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-center">
                     <span class="me-2">Référence :</span> 
                     <span v-if="materiel.references">{{ materiel.references }}</span>
-                    <span class="text-warning" v-else>Référence non renseigné</span>
+                    <span class="text-muted" v-else>Référence non renseigné</span>
                 </li>
             </ul>
         </div> 
     </div>
 
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center" v-if="materiel.description">
         <div class= "card w-75 mt-3 col-6">
-            <div class="form-floating" v-if="materiel.description">
+            <div class="form-floating">
                 <textarea class="form-control" :value="materiel.description" id="DescriptionMateriel" style="height: 150px"></textarea>
                 <label for="DescriptionMateriel">Description</label>
-            </div>
-
-            <div class="m-2" v-else>
-                <span class="text-warning">
-                    Aucune description renseignée
-                </span>
             </div>
         </div> 
     </div>
 
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center"  v-if="materiel.commentaire">
         <div class= "card w-75 mt-3 col-6">
-            <div class="form-floating" v-if="materiel.commentaire">
+            <div class="form-floating">
                 <textarea class="form-control" :value="materiel.commentaire" id="CommentaireMateriel" style="height: 150px"></textarea>
                 <label for="CommentaireMateriel">Commentaire</label>
-            </div>
-            <div class="m-2" v-else>
-                <span class="text-warning">
-                    Aucun commentaire renseigné
-                </span>
             </div>
         </div> 
     </div>
@@ -104,7 +93,7 @@
                 </ul>
             </div>
             <div class="m-2" v-else>
-                <span class="text-warning">
+                <span class="text-muted">
                     Materiel non affecté
                 </span>
             </div>
@@ -214,6 +203,11 @@ export default {
 
         ...mapActions(['refreshRessources', 'removeRessources']),
 
+        /**
+         * Retourne la date au format ergonomique pour l'utilisateur
+         * 
+         * @param {string} date 
+         */
         getdateFormat(date){
             return dateFormat(date);
         },

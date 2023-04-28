@@ -1,30 +1,48 @@
 <template>
     <div class="d-flex justify-content-center">
-        <div class= "card mt-3 col-6">
+        <div class= "card w-75 mt-3 col-6">
             <div class="d-block fs-5 w-100 py-2 text-secondary text-center">
                 <span class="me-2">#{{ personnelID }}</span>
-                <strong :class="labelClass"> {{ personnel.cache_nom }}</strong>
+                <strong class="fst-italic"> {{ personnel.cache_nom }}</strong>
             </div>
         </div>  
     </div>
 
     <div class="d-flex justify-content-center">
-        <div class= "card mt-3 col-6">
+        <div class= "card w-75 mt-3 col-6">
             <div v-if="getMateriel.length">
                 <h5 class="card-title m-2">Materiel associé : </h5>
-                <ul class="ms-5 list-group">
-                    <li v-for="matos in getMateriel" :key="matos.id">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-center align-items-center">
                         <div class="container">
-                            <div class="row d-flex align-items-center m-2">
-                                <span class="col-10">{{ matos.nom }}
-                                    <button class="btn mb-1" @click="informationMateriel(matos.id)">
-                                        <i class="bi bi-arrow-up-right"></i>
-                                    </button>
-                                </span>
-                                <div class="col"></div>
+                            <div class="row">
+                                <div class="col-1">
+
+                                </div>
+                                <div class="col-4">
+                                    <span>Materiel</span> 
+                                </div>
+                                <div class="col-3">
+                                    <span>Date de début :</span>
+                                </div>
+                                <div class="col-2">
+                                    <span>Date de fin :</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item" v-for="matos in getMateriel" :key="matos.id">
+                        <div class="container">
+                            <div class="row d-flex justify-content-start align-items-center">
+                                <button class="btn col-1" @click="informationMateriel(matos.id)">
+                                    <i class="bi bi-arrow-up-right me-2"></i>
+                                </button>
+                                <span class="col-4">{{ matos.nom }}</span>
+                                <div class="col-3">{{ getdateFormat(matos.affectations.dda) }}</div>
+                                <div class="col-3">{{ getdateFormat(matos.affectations.dfa) }}</div>
                                 <div class="d-flex justify-content-end col-1 mb-1">
-                                    <button class="btn btn-outline-danger" @click="supprMateriel()">
-                                        <i class="bi bi-trash"></i>
+                                    <button class="btn btn-outline-danger" @click="supprMateriel(matos.affectations)">
+                                        Désaffecter
                                     </button>
                                 </div>
                             </div>
@@ -33,7 +51,7 @@
                 </ul>
             </div>
             <div v-else>
-                <span class="text-warning">Aucun materiel renseigné</span>
+                <span class=" mx-2 text-muted">Aucun materiel renseigné</span>
             </div>
         </div> 
     </div>
@@ -54,7 +72,8 @@
 
 <script>
 
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
+import { dateFormat, toSqlDate } from '../../js/date.js';
 
 export default {
     data() {
@@ -78,15 +97,6 @@ export default {
     computed: {
 
         ...mapState(['affectations', 'ressources', 'personnels']),
-        
-        /**
-         * Retourne une classe italique lorsque le display name est vide.
-         * 
-         * @returns {String}
-         */
-         labelClass() {
-            return !this.personnel.cache_nom ? 'fst-italic' : '';
-        },
 
         /**
          * Retourne l'id du client récuperé via les parametre de la route
@@ -105,6 +115,7 @@ export default {
             for(let ress of this.ressources){
                 for (let aff of affectationPersonnel){
                     if (ress.id == aff.ressources_id){
+                        ress.affectations = aff;
                         finalMateriel.push(ress)
                     }
                 }
@@ -115,15 +126,27 @@ export default {
 
     methods: {
 
+        ...mapActions(['refreshAffectations', 'updateAffectations']),
+
+        getdateFormat(date){
+            return dateFormat(date)
+        },
+
         /**
          * Supprime et rafraichis le client apres avoir demander une confirmation de la supression
          */
-         supprMateriel(){
-            if (confirm("Etes vous sur de vouloir supprimer ce materiel? Cette action est définitive.")) {
-                    // this.removeRessources([this.client])
-                    // this.refreshRessources(this.clients);
-                    // this.$router.push("/utilisateurs/");
-                    console.log("Ce materiel a bien été retirer au client")
+         supprMateriel(affectation){
+             if (confirm("Etes vous sur de vouloir supprimer ce materiel? Cette action est définitive.")) {
+                let today = new Date();
+                affectation.drestitution = toSqlDate(today);
+                
+                this.$app.api.patch('/v2/affectation/'+ affectation.id, affectation).then(data => {
+                    this.updateAffectations([data]);
+                }).catch(this.$app.catchError)
+                .finally(() => {
+                    this.refreshAffectations(this.affectations)
+                });
+                // console.log("Ce materiel a bien été retirer au client")
             }
         },
 

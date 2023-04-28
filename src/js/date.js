@@ -110,7 +110,7 @@ export function toSqlDate(date, useTime) {
 /**
  * Retourne la date SQL au format H:MM ou J+1 H:MM.
  *
- * @param {string} val La date à convertir
+ * @param {date} val La date à convertir
  * @param {string} refVal La valeur précédente (pour avoir le J+1 sur la date de fin)
  *
  * @return {string}

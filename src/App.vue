@@ -68,6 +68,7 @@ export default {
 		$route() {
 			if (this.$route.name !== 'Home') {
 				this.$app.dispatchEvent('menuChanged','list');
+				this.displaySearch = '';
 			}
 		}
 	},
